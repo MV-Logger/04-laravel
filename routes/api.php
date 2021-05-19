@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\JwtAuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('/register', [JwtAuthController::class, 'register']);
+    Route::post('/login', [JwtAuthController::class, 'login']);
+    Route::middleware(["auth.jwt"])->group(function () {
+        Route::post('/token/refresh', [JwtAuthController::class, 'token.refresh']);
+        Route::post('/logout', [JwtAuthController::class, 'logout']);
+    });
+});
+
+Route::middleware(["auth.jwt"])->group(function () {
+    Route::get('/user', [JwtAuthController::class, 'user']);
+    Route::get('/hello', function () {
+        return "world";
+    });
+});
+Route::get('/test', function () {
+    return ":)";
 });

@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -38,4 +41,22 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        if (!$request->wantsJson())
+            return parent::render($request, $exception);
+        if ($exception instanceof AuthorizationException || $exception
+            instanceof UnauthorizedHttpException) {
+            return response(["status" => "error", "errors" => ["messages" => ["401 Unauthorized or " .
+                $exception->getMessage() . " or expired. You need to relogin."]]],
+
+            );
+        }
+        if ($exception instanceof NotFoundHttpException) {
+            return response(["status" => "error", "errors" => ["messages" => ["404 Not found"]]], 404);
+        }
+        return parent::render($request, $exception);
+    }
+
 }

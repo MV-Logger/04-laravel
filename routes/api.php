@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\EntryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JwtAuthController;
 /*
@@ -22,12 +24,16 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
+//validation through implicit binding
+
 Route::middleware(["auth.jwt"])->group(function () {
     Route::get('/user', [JwtAuthController::class, 'user']);
-    Route::get('/hello', function () {
-        return "world";
-    });
+    Route::get("/books", [BookController::class, "getBooks"]);
+    Route::post("/books", [BookController::class, "addBook"]);
+    Route::get("/books/{book}/entries", [EntryController::class, "getEntries"]);
+    Route::post("/books/{book}/entries", [EntryController::class, "addEntry"]);
 });
+
 Route::get('/test', function () {
     return ":)";
 });

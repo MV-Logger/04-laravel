@@ -57,7 +57,7 @@ class JwtAuthController extends Controller
     public function signout()
     {
         auth()->logout();
-        return response()->json(['message' => 'User loged out']);
+        return response()->json(['message' => 'User logged out']);
     }
 
     public function refresh()

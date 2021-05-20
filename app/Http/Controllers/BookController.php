@@ -35,4 +35,28 @@ class BookController extends Controller
             'name' => 'required|max:100'
         ]);
     }
+
+    public static function getBook(Book $book): Book
+    {
+        return $book;
+    }
+
+    public static function deleteBook(Book $book)
+    {
+        $book->delete();
+    }
+
+    public static function updateBook(Book $book, Request $request)
+    {
+        $request->validate([
+            "name" => "required|max:100"
+        ]);
+
+        if ($request->fails()) {
+            return response()->json($request->errors(), 400);
+        }
+
+        $book->name = $request->name;
+        $book->save();
+    }
 }

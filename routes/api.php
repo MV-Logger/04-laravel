@@ -20,7 +20,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/register', [JwtAuthController::class, 'register']);
     Route::post('/login', [JwtAuthController::class, 'login']);
     Route::middleware(["auth.jwt"])->group(function () {
-        Route::get("/authenticad", function () {
+        Route::get("/authenticated", function () {
             return response(null, 200);
         });
         Route::post('/token/refresh', [JwtAuthController::class, 'token.refresh']);

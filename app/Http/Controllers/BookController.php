@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Validator;
 
 class BookController extends Controller
 {
@@ -16,9 +17,11 @@ class BookController extends Controller
 
     public static function addBook(Request $request)
     {
-        self::validate($request);
+        $validated = Validator::make($request->all(),[
+            'name' => 'required|max:100'
+        ]);
 
-        if ($request->fails()) {
+        if ($validated ->fails()) {
             return response()->json($request->errors(), 400);
         }
 
@@ -26,14 +29,8 @@ class BookController extends Controller
         $book->name = $request->name;
         $book->user_id = Auth::id();
         $book->save();
-        return response(null, 201);
-    }
 
-    private static function validate(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|max:100'
-        ]);
+        return response(null, 201);
     }
 
     public static function getBook(Book $book): Book
